@@ -1,0 +1,56 @@
+1`1clear;
+
+%histogram for original Image  
+
+%Read the image and convert it to grayscale
+x =imread('university.png');
+%x= imread('lena_gray_512.png');
+%x= imread('Unequalized_Hawkes_bay_NZ.jpg');
+x=0.21*x(:,:,1)+0.72*x(:,:,2)+0.07*x(:,:,3); 
+
+figure(1);
+imshow(uint8(x));
+title('Original image');
+
+Hist=zeros(1,256);
+count=1;
+[A, B]=size(x);
+for i=1:A
+    for j=1:B
+        x1(count)=x(i,j);
+        count=count+1;
+    Hist(1,x(i,j)+1)=Hist(1,x(i,j)+1)+1;
+    end
+end
+figure(2);
+bar(Hist);
+title('histogram of original image');
+xlabel('Intensities');
+ylabel('Frequency');
+
+%histogram equalization by taking the cumilitive sum of the histogram and
+%then divide by the area of the image matrix
+Equalization_Sum=cumsum(Hist);
+hist_eq=Equalization_Sum*255/(B*A);
+hist_eq=round(hist_eq);
+histeq=hist_eq(x1+1);
+
+% Replace the new Histogram equalized values in the image matrix and plot
+% the histogram of new histogram equalized image
+k=1;
+Hist_Eq=zeros(1,256);
+for row=1:A
+    for col=1:B
+         img1(row,col)=histeq(k);
+        k=k+1;
+    Hist_Eq(1,img1(row,col)+1)=Hist_Eq(1,img1(row,col)+1)+1;
+    end
+end
+figure(3);
+imshow(uint8(img1));
+title('histogram equalised resultant image');
+figure(4);
+bar(Hist_Eq);
+title('histogram equalization of the image');
+xlabel('Intensities');
+ylabel('Frequency');
