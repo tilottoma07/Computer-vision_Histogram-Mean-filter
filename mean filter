@@ -1,0 +1,53 @@
+clear;
+clc;
+
+x=imread('lake.png');
+x=0.21*x(:,:,1)+0.72*x(:,:,2)+0.07*x(:,:,3);
+
+A = imnoise(x,'salt & pepper');
+figure(1);
+imshow(uint8(A));
+title('Image with Salt pepper Noise');
+
+kernel_matrix_1=[1/7;1/7;1/7;1/7;1/7;1/7;1/7];
+kernel_matrix_2=[1/7 1/7 1/7 1/7 1/7 1/7 1/7];
+
+[A_row, A_col] = size(A);
+
+zc = zeros(1,size(A,2));
+pad = [zc;zc;zc; A; zc;zc;zc;];
+
+pad=double(pad);
+
+tic
+
+ for i = 1:size(pad,1)-6
+    for j = 1:size(pad,2)
+        Temp = pad(i:i+6,j:j+0).*kernel_matrix_1;
+        filt(i,j) = sum(Temp(:));
+    end
+ end
+ 
+filt1=uint8(filt);
+
+zc1 = zeros(size(filt1,1),1);
+pad2 = [zc1,zc1,zc1, filt1, zc1,zc1,zc1];
+
+pad2=double(pad2);
+
+
+for k = 1:size(pad2,1)
+    for l = 1:size(pad2,2)-6
+        Temp2 = pad2(k:k+0,l:l+6).*kernel_matrix_2;
+        filt2(k,l) = sum(Temp2(:));
+    end
+end
+
+toc
+
+filt2=uint8(filt2);
+title('Image after Separable Mean Filtering');
+figure(2);
+imshow(filt2);
+
+
